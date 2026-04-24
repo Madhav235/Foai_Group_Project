@@ -6,7 +6,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />
-      <Route path="/generate" element={<GenerateTimetable />} />
+      <Route path="/generate-timetable" element={<GenerateTimetable />} />
     </Routes>
   );
 }

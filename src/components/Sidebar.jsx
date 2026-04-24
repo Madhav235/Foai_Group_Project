@@ -1,12 +1,6 @@
-import { Home, Clock3, Activity, SlidersHorizontal } from "lucide-react";
+import { Home } from "lucide-react";
 
-const navItems = [
-  { label: "Dashboard", icon: Home, active: true },
-  { label: "History", icon: Clock3 },
-  { label: "Compare", icon: Activity },
-];
-
-const settingsItems = [{ label: "Constraints", icon: SlidersHorizontal }];
+const navItems = [{ label: "Dashboard", icon: Home, active: true }];
 
 function Sidebar() {
   return (
@@ -47,23 +41,7 @@ function Sidebar() {
           </nav>
         </div>
 
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
-            Settings
-          </p>
-          <div className="mt-4 space-y-2">
-            {settingsItems.map((item) => (
-              <button
-                key={item.label}
-                type="button"
-                className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-100"
-              >
-                <item.icon className="h-5 w-5 text-slate-400" />
-                {item.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        {/* Settings removed: Constraints not needed in sidebar */}
       </div>
     </aside>
   );

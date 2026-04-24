@@ -4,13 +4,17 @@ import { useNavigate } from "react-router-dom";
 function DashboardContent() {
   const navigate = useNavigate();
 
+  const goToGenerate = () => navigate("/generate-timetable");
+
   return (
     <div className="mt-8">
       <div className="rounded-[36px] border border-slate-200 bg-white px-6 py-12 shadow-xl shadow-slate-200/80 sm:px-10">
         <div className="mx-auto max-w-2xl text-center">
           <button
             type="button"
-            className="flex h-28 w-28 items-center justify-center rounded-full border-2 border-dashed border-slate-300 text-slate-700 transition hover:border-slate-400 hover:bg-slate-50 mx-auto"
+            onClick={goToGenerate}
+            aria-label="Create a new timetable"
+            className="flex h-28 w-28 cursor-pointer items-center justify-center rounded-full border-2 border-dashed border-slate-300 text-slate-700 transition hover:border-slate-400 hover:bg-slate-50 mx-auto"
           >
             <Plus className="h-10 w-10" />
           </button>
@@ -28,8 +32,8 @@ function DashboardContent() {
           </div>
           <button
             type="button"
-            onClick={() => navigate("/generate")}
-            className="mt-8 inline-flex items-center justify-center rounded-full bg-slate-900 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 transition hover:bg-slate-800"
+            onClick={goToGenerate}
+            className="mt-8 inline-flex cursor-pointer items-center justify-center rounded-full bg-slate-900 px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 transition hover:bg-slate-800"
           >
             Generate timetable
           </button>

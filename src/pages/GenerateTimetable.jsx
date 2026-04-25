@@ -1,20 +1,60 @@
 import { useState } from "react";
+import { parseAllCSVs } from "../utils/csvParser";
 
 function GenerateTimetable() {
   const [studentsFile, setStudentsFile] = useState(null);
   const [roomsFile, setRoomsFile] = useState(null);
   const [daysFile, setDaysFile] = useState(null);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleFileChange = (setter) => (event) => {
     const file = event.target.files?.[0] ?? null;
     setter(file);
   };
 
-  const handleSubmit = () => {
-    if (studentsFile && roomsFile && daysFile) {
-      console.log("Students CSV:", studentsFile);
-      console.log("Rooms CSV:", roomsFile);
-      console.log("Days CSV:", daysFile);
+  const handleSubmit = async () => {
+    if (!studentsFile || !roomsFile || !daysFile) {
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      // Parse CSV files
+      const parsed = await parseAllCSVs(studentsFile, roomsFile, daysFile);
+      console.log("Parsed CSV data:", parsed);
+
+      // Send POST request with formatted JSON
+      const response = await fetch(
+        "http://localhost:5678/webhook-test/get-data",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(parsed),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      console.log("Response from server:", responseData);
+
+      setResult(parsed);
+    } catch (err) {
+      console.error("Error:", err);
+      setResult(null);
+      setError(
+        err instanceof Error ? err.message : "Failed to process request",
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,15 +126,27 @@ function GenerateTimetable() {
         <button
           type="button"
           onClick={handleSubmit}
-          disabled={!allFilesSelected}
+          disabled={!allFilesSelected || loading}
           className={`mt-8 w-full rounded-full px-6 py-3 text-sm font-semibold transition ${
-            allFilesSelected
+            allFilesSelected && !loading
               ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10 hover:bg-slate-800"
               : "cursor-not-allowed bg-slate-200 text-slate-400"
           }`}
         >
-          Generate Timetable
+          {loading ? "Generating..." : "Generate Timetable"}
         </button>
+
+        {error ? (
+          <p className="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm text-rose-700">
+            {error}
+          </p>
+        ) : null}
+
+        {result ? (
+          <pre className="mt-4 max-h-72 overflow-auto rounded-3xl bg-slate-950 p-4 text-xs text-slate-100">
+            {JSON.stringify(result, null, 2)}
+          </pre>
+        ) : null}
       </div>
     </div>
   );

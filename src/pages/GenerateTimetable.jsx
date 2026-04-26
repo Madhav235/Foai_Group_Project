@@ -106,7 +106,7 @@ function GenerateTimetable() {
         days: daysData,
       };
 
-      const response = await fetch("http://localhost:5678/webhook/get-data-2", {
+      const response = await fetch("https://foai-group-project-n8n-host.onrender.com/webhook/get-data-2", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 function DashboardContent() {
   const navigate = useNavigate();
 
-  const goToGenerate = () => navigate("/generate-timetable");
+  const goToGenerate = () => navigate("/generate");
 
   return (
     <div className="mt-8">

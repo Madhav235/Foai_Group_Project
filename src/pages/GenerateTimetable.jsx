@@ -23,6 +23,9 @@ function GenerateTimetable() {
   const [workspaces, setWorkspaces] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [errorList, setErrorList] = useState([]);
+  const [fileInputKey, setFileInputKey] = useState(Date.now());
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -132,14 +135,23 @@ function GenerateTimetable() {
         throw new Error("No data received from server");
       }
 
+      if (responseData.status === false) {
+        setErrorList(responseData.errors || []);
+        setErrorModalOpen(true);
+        setLoading(false);
+        return;
+      }
+
+      const timetableData = responseData.data || responseData;
+
       const timetable = createTimetable(
-        responseData,
+        timetableData,
         selectedWorkspace?.id ?? null,
       );
       navigate(`/schedule?t=${timetable.id}`, {
         state: {
           timetableId: timetable.id,
-          data: responseData,
+          data: timetableData,
           workspaceId: timetable.workspaceId,
         },
       });
@@ -195,7 +207,7 @@ function GenerateTimetable() {
           </div>
         ) : null}
 
-        <div className="mt-10 space-y-6">
+        <div className="mt-10 space-y-6" key={fileInputKey}>
           <label className="block rounded-3xl border border-slate-200 bg-slate-50 p-4">
             <span className="mb-2 block text-sm font-medium text-slate-700">
               Students CSV
@@ -264,7 +276,17 @@ function GenerateTimetable() {
               : "cursor-not-allowed bg-slate-200 text-slate-400"
           }`}
         >
-          {loading ? "Generating..." : "Generate Timetable"}
+          {loading ? (
+            <div className="flex items-center justify-center gap-2">
+              <svg className="h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Generating...
+            </div>
+          ) : (
+            "Generate Timetable"
+          )}
         </button>
 
         {error ? (
@@ -340,6 +362,50 @@ function GenerateTimetable() {
                 )}
               </div>
             ) : null}
+          </div>
+        </div>
+      ) : null}
+
+      {errorModalOpen ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative flex w-full max-w-[500px] max-h-[70vh] flex-col rounded-[24px] bg-white p-6 shadow-2xl ring-1 ring-slate-200 sm:p-8">
+            <button
+              onClick={() => setErrorModalOpen(false)}
+              className="absolute right-5 top-5 rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            <div className="mb-5">
+              <h2 className="mb-1 text-xl font-semibold text-rose-600">Validation Errors</h2>
+              <p className="text-sm text-slate-500">Please fix the following issues before continuing</p>
+            </div>
+            
+            <div className="mb-6 flex-1 space-y-2 overflow-y-auto pr-2 max-h-[300px]">
+              {errorList.map((err, idx) => (
+                <div key={idx} className="flex items-start gap-2 rounded-xl bg-rose-50 px-4 py-2.5 text-sm text-rose-700 animate-in fade-in slide-in-from-bottom-2 duration-300" style={{ animationDelay: `${idx * 50}ms`, animationFillMode: "both" }}>
+                  <span className="mt-0.5 text-base leading-none">⚠️</span>
+                  <span>{err}</span>
+                </div>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setErrorModalOpen(false);
+                setErrorList([]);
+                setStudentsFile(null);
+                setRoomsFile(null);
+                setDaysFile(null);
+                setFileInputKey(Date.now());
+              }}
+              className="w-full rounded-full bg-slate-900 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 transition hover:bg-slate-800"
+            >
+              Upload CSV Again
+            </button>
           </div>
         </div>
       ) : null}

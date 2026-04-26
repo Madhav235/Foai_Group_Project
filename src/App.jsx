@@ -10,6 +10,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/generate" element={<GenerateTimetable />} />
+      <Route path="/generate-timetable" element={<GenerateTimetable />} />
       <Route path="/workspaces" element={<ManageWorkspaces />} />
       <Route path="/recents" element={<Recents />} />
       <Route path="/schedule" element={<SchedulePanel />} />

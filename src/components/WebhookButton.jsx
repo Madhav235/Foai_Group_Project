@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { sendToWebhook } from "../utils/webhookHandler";
 
 export default function WebhookButton() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   // Sample student data
   const sampleStudents = [
@@ -15,8 +17,10 @@ export default function WebhookButton() {
     try {
       setLoading(true);
       setError(null);
-      await sendToWebhook(sampleStudents);
-      alert("Data sent successfully! Check console for response.");
+      const responseData = await sendToWebhook(sampleStudents);
+
+      // Navigate to SchedulePanel with response data
+      navigate("/schedule", { state: responseData });
     } catch (err) {
       setError(err.message);
       alert("Error sending data. Check console for details.");

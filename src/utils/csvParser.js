@@ -218,3 +218,18 @@ export const parseAllCSVs = async (studentsFile, roomsFile, daysFile) => {
   console.log("Parsed CSV result:", result);
   return result;
 };
+
+export const parseStudentsFile = async (file) => {
+  const text = await readFileText(file);
+  return parseStudentsCsv(text);
+};
+
+export const parseRoomsFile = async (file) => {
+  const text = await readFileText(file);
+  return parseRoomsCsv(text);
+};
+
+export const parseDaysFile = async (file) => {
+  const text = await readFileText(file);
+  return parseDaysCsv(text);
+};

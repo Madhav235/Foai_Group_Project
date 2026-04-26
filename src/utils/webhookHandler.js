@@ -6,7 +6,7 @@
 export const sendToWebhook = async (students) => {
   try {
     // Send POST request to webhook
-    const response = await fetch("http://localhost:5678/webhook/get-data", {
+    const response = await fetch("http://localhost:5678/webhook/get-data-2", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

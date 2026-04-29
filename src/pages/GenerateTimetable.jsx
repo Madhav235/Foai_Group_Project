@@ -12,6 +12,9 @@ import {
   parseStudentsFile,
 } from "../utils/csvParser";
 
+// const URL = "https://foai-group-project-n8n-host.onrender.com/webhook/get-data-2"
+const URL = "http://localhost:5678/webhook/get-data-2"
+
 function GenerateTimetable() {
   const [studentsFile, setStudentsFile] = useState(null);
   const [roomsFile, setRoomsFile] = useState(null);
@@ -109,7 +112,7 @@ function GenerateTimetable() {
         days: daysData,
       };
 
-      const response = await fetch("https://foai-group-project-n8n-host.onrender.com/webhook/get-data-2", {
+      const response = await fetch(`${URL}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -270,11 +273,10 @@ function GenerateTimetable() {
           type="button"
           onClick={handleSubmit}
           disabled={!allFilesSelected || loading}
-          className={`mt-8 w-full rounded-full px-6 py-3 text-sm font-semibold transition ${
-            allFilesSelected && !loading
+          className={`mt-8 w-full rounded-full px-6 py-3 text-sm font-semibold transition ${allFilesSelected && !loading
               ? "bg-slate-900 text-white shadow-lg shadow-slate-900/10 hover:bg-slate-800"
               : "cursor-not-allowed bg-slate-200 text-slate-400"
-          }`}
+            }`}
         >
           {loading ? (
             <div className="flex items-center justify-center gap-2">
@@ -382,7 +384,7 @@ function GenerateTimetable() {
               <h2 className="mb-1 text-xl font-semibold text-rose-600">Validation Errors</h2>
               <p className="text-sm text-slate-500">Please fix the following issues before continuing</p>
             </div>
-            
+
             <div className="mb-6 flex-1 space-y-2 overflow-y-auto pr-2 max-h-[300px]">
               {errorList.map((err, idx) => (
                 <div key={idx} className="flex items-start gap-2 rounded-xl bg-rose-50 px-4 py-2.5 text-sm text-rose-700 animate-in fade-in slide-in-from-bottom-2 duration-300" style={{ animationDelay: `${idx * 50}ms`, animationFillMode: "both" }}>
